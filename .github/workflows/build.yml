@@ -53,7 +53,11 @@ jobs:
 
       - name: Clone ImmortalWrt source
         run: |
-          git clone --depth=1 --branch ${{ env.REPO_BRANCH }} ${{ env.REPO_URL }} immortalwrt
+          # Pin source to a proven-working commit (2026-02-10): builds before this
+          # date produced firmware successfully; later commits broke the mt_wifi7
+          # driver Kconfig (FIRST_IF resets to NONE -> mt_wifi.ko never built).
+          git clone --branch ${{ env.REPO_BRANCH }} ${{ env.REPO_URL }} immortalwrt
+          git -C immortalwrt checkout 3bc8507971410e5f269bd024d7add6819810a0cb
           echo "SOURCE_DIR=$PWD/immortalwrt" >> $GITHUB_ENV
 
       - name: Apply base defconfig
